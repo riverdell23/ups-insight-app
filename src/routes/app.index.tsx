@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Library, GitCompare, ClipboardList, ShieldCheck, ArrowRight } from "lucide-react";
+import { Library, ClipboardList, ShieldCheck, ArrowRight } from "lucide-react";
 
 export const Route = createFileRoute("/app/")({ component: Dashboard });
 
@@ -50,7 +50,7 @@ function Dashboard() {
 
       <div className="grid gap-6 lg:grid-cols-3">
         <Link to="/app/library"><ActionCard icon={Library} title="UPS Library" desc="Search and filter the full catalogue" /></Link>
-        <Link to="/app/compare"><ActionCard icon={GitCompare} title="Compare products" desc="Pin 2–4 UPS side-by-side" /></Link>
+        
         <Link to="/app/checklist"><ActionCard icon={ClipboardList} title="Enquiry checklist" desc="Generate a vendor RFQ checklist" /></Link>
       </div>
 
