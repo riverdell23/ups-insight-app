@@ -148,7 +148,7 @@ function LibraryPage() {
           <Select value={modular} onValueChange={setModular}>
             <SelectTrigger><SelectValue placeholder="Type" /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All types</SelectItem>
+              <SelectItem value="all">UPS Type</SelectItem>
               <SelectItem value="Modular">Modular</SelectItem>
               <SelectItem value="Monolithic">Monolithic</SelectItem>
             </SelectContent>
@@ -156,13 +156,13 @@ function LibraryPage() {
           <Select value={battery} onValueChange={setBattery}>
             <SelectTrigger><SelectValue placeholder="Battery" /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All chemistries</SelectItem>
+              <SelectItem value="all">Battery chemistries</SelectItem>
               <SelectItem value="VRLA">VRLA</SelectItem>
               <SelectItem value="Li-ion">Li-ion</SelectItem>
             </SelectContent>
           </Select>
-          <Input placeholder="Enter target UPS load (kW)" type="number" value={e.g. 50, 1000} onChange={(e) => setMinCap(e.target.value)} />
-          <Input placeholder="Minimum double-conv. efficiency %" type="number" value={minEff} onChange={(e) => setMinEff(e.target.value)} />
+          <Input className="min-w-[260px]" placeholder="Enter target UPS load (kW)" type="number" value={minCap} onChange={(e) => setMinCap(e.target.value)} />
+          <Input className="min-w-[320px]" placeholder="Minimum double-conv. efficiency %" type="number" value={minEff} onChange={(e) => setMinEff(e.target.value)} />
         </div>
       </Card>
 
