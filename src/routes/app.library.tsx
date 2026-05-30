@@ -44,7 +44,13 @@ function LibraryPage() {
       if (vendor !== "all" && p.vendor_id !== vendor) return false;
       if (modular !== "all" && p.modular_type !== modular) return false;
       if (battery !== "all" && !(p.battery_type ?? "").toLowerCase().includes(battery.toLowerCase())) return false;
-      if (minCap && (p.max_capacity_kw ?? 0) < Number(minCap)) return false;
+      if (minCap) {
+        const targetKw = Number(minCap);
+        const minKw = Number(p.min_capacity_kw ?? 0);
+        const maxKw = Number(p.max_capacity_kw ?? 0);
+      
+        if (targetKw < minKw || targetKw > maxKw) return false;
+      }
       if (minEff && (p.double_conversion_efficiency ?? 0) < Number(minEff)) return false;
       return true;
     });
