@@ -139,10 +139,27 @@ function LibraryPage() {
                     <div className="text-xs text-muted-foreground">{p.product_series}</div>
                   </td>
                   <td className="p-3">{p.modular_type}</td>
-                  <td className="p-3 text-right font-mono">{p.min_capacity_kw}–{p.max_capacity_kw}</td>
-                  <td className="p-3 text-right font-mono">{p.max_parallel_kw}</td>
-                  <td className="p-3 text-right font-mono">{p.double_conversion_efficiency}</td>
-                  <td className="p-3">{p.battery_type}</td>
+                  <td className="p-3 text-right font-mono">
+  {p.min_capacity_kw && p.max_capacity_kw
+    ? `${p.min_capacity_kw}-${p.max_capacity_kw}`
+    : p.min_capacity_kw ?? p.max_capacity_kw ?? "-"}
+</td>
+
+<td className="p-3 text-right font-mono">
+  {p.max_capacity_kw ?? "-"}
+</td>
+
+<td className="p-3 text-right font-mono">
+  {p.max_parallel_kw ?? "-"}
+</td>
+
+<td className="p-3 text-right font-mono">
+  {p.double_conversion_efficiency ?? "-"}
+</td>
+
+<td className="p-3">
+  {p.battery_type ?? "-"}
+</td>
                   <td className="p-3"><Badge variant="outline" className={verificationBadgeClass(p.verification_status)}>{p.verification_status}</Badge></td>
                   <td className="p-3"><Link to="/app/products/$id" params={{ id: p.id }}><Button variant="ghost" size="sm">View</Button></Link></td>
                 </tr>
