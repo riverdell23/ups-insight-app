@@ -161,8 +161,8 @@ function LibraryPage() {
               <SelectItem value="Li-ion">Li-ion</SelectItem>
             </SelectContent>
           </Select>
-          <Input placeholder="Min kW" type="number" value={minCap} onChange={(e) => setMinCap(e.target.value)} />
-          <Input placeholder="Min efficiency %" type="number" value={minEff} onChange={(e) => setMinEff(e.target.value)} />
+          <Input placeholder="Enter target UPS load (kW)" type="number" value={e.g. 50, 1000} onChange={(e) => setMinCap(e.target.value)} />
+          <Input placeholder="Minimum double-conv. efficiency %" type="number" value={minEff} onChange={(e) => setMinEff(e.target.value)} />
         </div>
       </Card>
 
