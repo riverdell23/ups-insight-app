@@ -172,13 +172,13 @@ function LibraryPage() {
             <thead className="bg-muted/50 text-xs uppercase tracking-wider text-muted-foreground">
               <tr>
                 <th className="w-10 p-3"></th>
-                <th className="text-left p-3">Vendor / Series</th>
+                <th className="text-left p-3">UPS Series</th>
                 
-                <th className="px-4 py-3 text-left">Selected rating</th>
-                <th className="text-right p-3">Capacity (kW)</th>
-                <th className="text-right p-3">Parallel (kW)</th>
-                <th className="text-right p-3">DC Eff %</th>
-                <th className="text-left p-3">Battery</th>
+                <th className="px-4 py-3 text-left">Selected Rating</th>
+                <th className="text-right p-3">Max Capacity (kW)</th>
+                <th className="text-right p-3">Max Parallel (kW)</th>
+                <th className="text-right p-3">Double Conv. Eff %</th>
+                <th className="text-left p-3">Battery Type</th>
                 <th className="text-left p-3">Physical Data</th>
                 <th className="text-left p-3">Status</th>
                 <th className="p-3"></th>
