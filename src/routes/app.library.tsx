@@ -33,7 +33,7 @@ function LibraryPage() {
 
   const { data: products, isLoading } = useQuery({
     queryKey: ["products"],
-    queryFn: async () => (await supabase.from("ups_products").select("*, vendors(id,name)").order("product_series")).data ?? [],
+    queryFn: async () => (await supabase.from("ups_products").select("*, vendors(id,name),ups_ratings(id)").order("product_series")).data ?? [],
   });
 
   const filtered = useMemo(() => {
@@ -119,7 +119,7 @@ function LibraryPage() {
               <tr>
                 <th className="w-10 p-3"></th>
                 <th className="text-left p-3">Vendor / Series</th>
-                <th className="text-left p-3">Type</th>
+                <th className="text-left p-3">Type</th><th className="px-4 py-3 text-left">Ratings</th>
                 <th className="text-right p-3">Capacity (kW)</th>
                 <th className="text-right p-3">Parallel (kW)</th>
                 <th className="text-right p-3">DC Eff %</th>

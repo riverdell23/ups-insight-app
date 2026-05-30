@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -30,7 +31,17 @@ function ProductDetail() {
     queryKey: ["specs", id],
     queryFn: async () => (await supabase.from("ups_specs").select("*").eq("product_id", id)).data ?? [],
   });
-
+  const { data: ratings } = useQuery({
+    queryKey: ["ratings", id],
+    queryFn: async () =>
+      (await supabase
+        .from("ups_ratings")
+        .select("*")
+        .eq("product_id", id)
+        .order("kw", { ascending: true })).data ?? [],
+  });
+  
+  const [selectedRating, setSelectedRating] = useState<any>(null);
   if (isLoading) return <div className="text-muted-foreground">Loading…</div>;
   if (!product) return <div>Not found</div>;
 
@@ -92,7 +103,97 @@ function ProductDetail() {
             ))}
           </dl>
         </Card>
+        <Card className="lg:col-span-3 p-6">
+  <h2 className="font-display text-lg font-semibold mb-4">Available Ratings</h2>
 
+  {!ratings?.length ? (
+    <p className="text-sm text-muted-foreground">No rating options recorded.</p>
+  ) : (
+    <div className="overflow-x-auto">
+      <table className="w-full text-sm">
+        <thead>
+          <tr className="border-b text-left text-muted-foreground">
+            <th className="py-2 pr-4">Rating</th>
+            <th className="py-2 pr-4">kVA</th>
+            <th className="py-2 pr-4">kW</th>
+            <th className="py-2 pr-4">Efficiency</th>
+            <th className="py-2 pr-4">Dimensions</th>
+            <th className="py-2 pr-4">Footprint</th>
+            <th className="py-2 pr-4">Weight</th>
+            <th className="py-2 pr-4">Battery option</th>
+            <th className="py-2 pr-4">Datasheet/source</th>
+            <th className="py-2 pr-4">Last updated</th>
+          </tr>
+        </thead>
+        <tbody>
+          {ratings.map((rating: any) => (
+            <tr
+              key={rating.id}
+              className="border-b hover:bg-muted/40 cursor-pointer"
+              onClick={() => setSelectedRating(rating)}
+            >
+              <td className="py-3 pr-4 font-medium">{rating.rating_label ?? "-"}</td>
+              <td className="py-3 pr-4">{rating.kva ?? "-"}</td>
+              <td className="py-3 pr-4">{rating.kw ?? "-"}</td>
+              <td className="py-3 pr-4">{rating.efficiency ?? "-"}</td>
+              <td className="py-3 pr-4">{rating.dimensions ?? "-"}</td>
+              <td className="py-3 pr-4">{rating.footprint_m2 ?? "-"}</td>
+              <td className="py-3 pr-4">{rating.weight_kg ?? "-"}</td>
+              <td className="py-3 pr-4">{rating.battery_option ?? "-"}</td>
+              <td className="py-3 pr-4">
+                {rating.datasheet_url ? (
+                  <a
+                    href={rating.datasheet_url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="underline"
+                  >
+                    Source
+                  </a>
+                ) : (
+                  "-"
+                )}
+              </td>
+              <td className="py-3 pr-4">{rating.last_updated ?? "-"}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  )}
+
+  {selectedRating && (
+    <div className="mt-6 rounded-xl border p-4 bg-muted/20">
+      <h3 className="font-semibold mb-3">Selected rating details</h3>
+      <div className="grid md:grid-cols-2 gap-3 text-sm">
+        <div><span className="text-muted-foreground">Rating:</span> {selectedRating.rating_label ?? "-"}</div>
+        <div><span className="text-muted-foreground">kVA:</span> {selectedRating.kva ?? "-"}</div>
+        <div><span className="text-muted-foreground">kW:</span> {selectedRating.kw ?? "-"}</div>
+        <div><span className="text-muted-foreground">Efficiency:</span> {selectedRating.efficiency ?? "-"}</div>
+        <div><span className="text-muted-foreground">Dimensions:</span> {selectedRating.dimensions ?? "-"}</div>
+        <div><span className="text-muted-foreground">Footprint:</span> {selectedRating.footprint_m2 ?? "-"} m²</div>
+        <div><span className="text-muted-foreground">Weight:</span> {selectedRating.weight_kg ?? "-"} kg</div>
+        <div><span className="text-muted-foreground">Battery option:</span> {selectedRating.battery_option ?? "-"}</div>
+        <div><span className="text-muted-foreground">Last updated:</span> {selectedRating.last_updated ?? "-"}</div>
+        <div>
+          <span className="text-muted-foreground">Source:</span>{" "}
+          {selectedRating.datasheet_url ? (
+            <a
+              href={selectedRating.datasheet_url}
+              target="_blank"
+              rel="noreferrer"
+              className="underline"
+            >
+              {selectedRating.source_title ?? "Datasheet/source"}
+            </a>
+          ) : (
+            "-"
+          )}
+        </div>
+      </div>
+    </div>
+  )}
+</Card>
         <Card className="p-6 h-fit">
           <h2 className="font-display text-lg font-semibold mb-4">Sources</h2>
           {sources?.length === 0 && <p className="text-sm text-muted-foreground">No sources recorded.</p>}
