@@ -141,7 +141,7 @@ function LibraryPage() {
               <tr>
                 <th className="w-10 p-3"></th>
                 <th className="text-left p-3">Vendor / Series</th>
-                <th className="text-left p-3">Type</th><th className="px-4 py-3 text-left">Ratings</th>
+                <th className="text-left p-3">Type</th>
                 <th className="px-4 py-3 text-left">Selected rating</th>
                 <th className="text-right p-3">Capacity (kW)</th>
                 <th className="text-right p-3">Parallel (kW)</th>
@@ -152,8 +152,8 @@ function LibraryPage() {
               </tr>
             </thead>
             <tbody>
-              {isLoading && <tr><td colSpan={10} className="p-8 text-center text-muted-foreground">Loading…</td></tr>}
-              {!isLoading && filtered.length === 0 && <tr><td colSpan={10} className="p-8 text-center text-muted-foreground">No products match your filters.</td></tr>}
+              {isLoading && <tr><td colSpan={9} className="p-8 text-center text-muted-foreground">Loading…</td></tr>}
+              {!isLoading && filtered.length === 0 && <tr><td colSpan={9} className="p-8 text-center text-muted-foreground">No products match your filters.</td></tr>}
               {filtered.map((p: any) => (
                 <tr key={p.id} className="border-t border-border hover:bg-muted/30">
                   <td className="p-3"><Checkbox checked={selected.includes(p.id)} onCheckedChange={() => toggle(p.id)} /></td>
@@ -184,11 +184,7 @@ function LibraryPage() {
       ))}
   </select>
 </td>
-                  <td className="p-3 text-right font-mono">
-  {p.min_capacity_kw && p.max_capacity_kw
-    ? `${p.min_capacity_kw}-${p.max_capacity_kw}`
-    : p.min_capacity_kw ?? p.max_capacity_kw ?? "-"}
-</td>
+                 
 
 <td className="p-3 text-right font-mono">
   {p.max_capacity_kw ?? "-"}
