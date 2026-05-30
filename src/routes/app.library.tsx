@@ -34,9 +34,41 @@ function LibraryPage() {
 
   const { data: products, isLoading } = useQuery({
     queryKey: ["products"],
-    queryFn: async () => (await supabase.from("ups_products").select("*, vendors(id,name),ups_ratings(id,rating_label,kw)").order("product_series")).data ?? [],
+    queryFn: async () => (await supabase.from("ups_products").select("*, vendors(id,name),ups_ratings(id,rating_label,kw,dimensions,footprint_m2,weight_kg))").order("product_series")).data ?? [],
   });
-
+  const physicalDataStatus = (product: any) => {
+    const ratings = product.ups_ratings ?? [];
+  
+    if (ratings.length === 0) {
+      return {
+        label: "To verify",
+        className: "border-amber-200 bg-amber-50 text-amber-700",
+      };
+    }
+  
+    const completeCount = ratings.filter(
+      (rating: any) => rating.dimensions && rating.footprint_m2 && rating.weight_kg
+    ).length;
+  
+    if (completeCount === ratings.length) {
+      return {
+        label: "Complete",
+        className: "border-emerald-200 bg-emerald-50 text-emerald-700",
+      };
+    }
+  
+    if (completeCount > 0) {
+      return {
+        label: "Partial",
+        className: "border-blue-200 bg-blue-50 text-blue-700",
+      };
+    }
+  
+    return {
+      label: "To verify",
+      className: "border-amber-200 bg-amber-50 text-amber-700",
+    };
+  };
   const filtered = useMemo(() => {
     return (products ?? []).filter((p: any) => {
       if (!isAdmin && p.verification_status === "Draft") return false;
@@ -147,13 +179,14 @@ function LibraryPage() {
                 <th className="text-right p-3">Parallel (kW)</th>
                 <th className="text-right p-3">DC Eff %</th>
                 <th className="text-left p-3">Battery</th>
+                <th className="text-left p-3">Physical Data</th>
                 <th className="text-left p-3">Status</th>
                 <th className="p-3"></th>
               </tr>
             </thead>
             <tbody>
-              {isLoading && <tr><td colSpan={8} className="p-8 text-center text-muted-foreground">Loading…</td></tr>}
-              {!isLoading && filtered.length === 0 && <tr><td colSpan={8} className="p-8 text-center text-muted-foreground">No products match your filters.</td></tr>}
+              {isLoading && <tr><td colSpan={9} className="p-8 text-center text-muted-foreground">Loading…</td></tr>}
+              {!isLoading && filtered.length === 0 && <tr><td colSpan={9} className="p-8 text-center text-muted-foreground">No products match your filters.</td></tr>}
               {filtered.map((p: any) => (
                 <tr key={p.id} className="border-t border-border hover:bg-muted/30">
                   <td className="p-3"><Checkbox checked={selected.includes(p.id)} onCheckedChange={() => toggle(p.id)} /></td>
@@ -200,6 +233,16 @@ function LibraryPage() {
 
 <td className="p-3">
   {p.battery_type ?? "-"}
+</td>
+<td className="p-3">
+  {(() => {
+    const status = physicalDataStatus(p);
+    return (
+      <Badge variant="outline" className={status.className}>
+        {status.label}
+      </Badge>
+    );
+  })()}
 </td>
                   <td className="p-3"><Badge variant="outline" className={verificationBadgeClass(p.verification_status)}>{p.verification_status}</Badge></td>
                   <td className="p-3"><Link to="/app/products/$id" params={{ id: p.id }}><Button variant="ghost" size="sm">View</Button></Link></td>
