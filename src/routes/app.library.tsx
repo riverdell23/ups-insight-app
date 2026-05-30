@@ -72,7 +72,17 @@ function LibraryPage() {
   const filtered = useMemo(() => {
     return (products ?? []).filter((p: any) => {
       if (!isAdmin && p.verification_status === "Draft") return false;
-      if (search && !`${p.vendors?.name} ${p.product_series}`.toLowerCase().includes(search.toLowerCase())) return false;
+      const searchText = `${p.vendors?.name ?? ""} ${p.product_series ?? ""}`.toLowerCase();
+const normalizedSearch = search.toLowerCase().trim();
+
+const searchAliases: Record<string, string[]> = {
+  rehlko: ["rehlko", "kohler"],
+  kohler: ["kohler", "rehlko"],
+};
+
+const searchTerms = searchAliases[normalizedSearch] ?? [normalizedSearch];
+
+if (normalizedSearch && !searchTerms.some((term) => searchText.includes(term))) return false;
       if (vendor !== "all" && p.vendor_id !== vendor) return false;
       if (modular !== "all" && p.modular_type !== modular) return false;
       if (battery !== "all" && !(p.battery_type ?? "").toLowerCase().includes(battery.toLowerCase())) return false;

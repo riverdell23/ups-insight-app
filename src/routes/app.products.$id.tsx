@@ -140,7 +140,12 @@ function ProductDetail() {
           </dl>
         </Card>
         <Card className="lg:col-span-3 p-6">
-  <h2 className="font-display text-lg font-semibold mb-4">Available Ratings</h2>
+        <div className="mb-4">
+  <h2 className="font-display text-lg font-semibold">Available Ratings</h2>
+  <p className="mt-1 text-sm text-muted-foreground">
+    Physical data is for preliminary screening only. Verify the latest manufacturer datasheet before design use.
+  </p>
+</div>
 
   {!ratings?.length ? (
     <p className="text-sm text-muted-foreground">No rating options recorded.</p>
