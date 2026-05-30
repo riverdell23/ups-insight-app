@@ -141,7 +141,7 @@ function LibraryPage() {
               <tr>
                 <th className="w-10 p-3"></th>
                 <th className="text-left p-3">Vendor / Series</th>
-                <th className="text-left p-3">Type</th>
+                
                 <th className="px-4 py-3 text-left">Selected rating</th>
                 <th className="text-right p-3">Capacity (kW)</th>
                 <th className="text-right p-3">Parallel (kW)</th>
@@ -152,8 +152,8 @@ function LibraryPage() {
               </tr>
             </thead>
             <tbody>
-              {isLoading && <tr><td colSpan={9} className="p-8 text-center text-muted-foreground">Loading…</td></tr>}
-              {!isLoading && filtered.length === 0 && <tr><td colSpan={9} className="p-8 text-center text-muted-foreground">No products match your filters.</td></tr>}
+              {isLoading && <tr><td colSpan={8} className="p-8 text-center text-muted-foreground">Loading…</td></tr>}
+              {!isLoading && filtered.length === 0 && <tr><td colSpan={8} className="p-8 text-center text-muted-foreground">No products match your filters.</td></tr>}
               {filtered.map((p: any) => (
                 <tr key={p.id} className="border-t border-border hover:bg-muted/30">
                   <td className="p-3"><Checkbox checked={selected.includes(p.id)} onCheckedChange={() => toggle(p.id)} /></td>
@@ -161,7 +161,7 @@ function LibraryPage() {
                     <Link to="/app/products/$id" params={{ id: p.id }} className="font-medium hover:text-accent">{p.vendors?.name}</Link>
                     <div className="text-xs text-muted-foreground">{p.product_series}</div>
                   </td>
-                  <td className="p-3">{p.modular_type}</td>
+                  
                   <td className="px-4 py-3">
   <select
     className="w-full rounded-md border border-border bg-background px-2 py-1 text-xs"
