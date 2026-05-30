@@ -141,7 +141,7 @@ function ComparePage() {
             className="gap-1"
             onClick={downloadRatingCompareCsv}
           >
-            <Download className="h-4 w-4" /> Export CSV
+            <Download className="h-4 w-4" /> Export Selected Rating CSV
           </Button>
         )}
       </div>
