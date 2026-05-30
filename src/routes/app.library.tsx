@@ -25,6 +25,7 @@ function LibraryPage() {
   const [minCap, setMinCap] = useState("");
   const [minEff, setMinEff] = useState("");
   const [selected, setSelected] = useState<string[]>([]);
+  const [selectedRatingByProductId, setSelectedRatingByProductId] = useState<Record<string, string>>({});
 
   const { data: vendors } = useQuery({
     queryKey: ["vendors"],
@@ -33,7 +34,7 @@ function LibraryPage() {
 
   const { data: products, isLoading } = useQuery({
     queryKey: ["products"],
-    queryFn: async () => (await supabase.from("ups_products").select("*, vendors(id,name),ups_ratings(id)").order("product_series")).data ?? [],
+    queryFn: async () => (await supabase.from("ups_products").select("*, vendors(id,name),ups_ratings(id,rating_label,kw)").order("product_series")).data ?? [],
   });
 
   const filtered = useMemo(() => {
@@ -59,7 +60,22 @@ function LibraryPage() {
 
   const goCompare = () => {
     if (selected.length < 2) return toast.error("Select at least 2 products");
-    navigate({ to: "/app/compare", search: { ids: selected.join(",") } });
+  
+    const selectedRatings = selected
+      .map((productId) => {
+        const ratingId = selectedRatingByProductId[productId];
+        return ratingId ? `${productId}:${ratingId}` : null;
+      })
+      .filter(Boolean)
+      .join(",");
+  
+    navigate({
+      to: "/app/compare",
+      search: {
+        ids: selected.join(","),
+        ratings: selectedRatings,
+      },
+    });
   };
 
   return (
@@ -120,6 +136,7 @@ function LibraryPage() {
                 <th className="w-10 p-3"></th>
                 <th className="text-left p-3">Vendor / Series</th>
                 <th className="text-left p-3">Type</th><th className="px-4 py-3 text-left">Ratings</th>
+                <th className="px-4 py-3 text-left">Selected rating</th>
                 <th className="text-right p-3">Capacity (kW)</th>
                 <th className="text-right p-3">Parallel (kW)</th>
                 <th className="text-right p-3">DC Eff %</th>
@@ -129,8 +146,8 @@ function LibraryPage() {
               </tr>
             </thead>
             <tbody>
-              {isLoading && <tr><td colSpan={9} className="p-8 text-center text-muted-foreground">Loading…</td></tr>}
-              {!isLoading && filtered.length === 0 && <tr><td colSpan={9} className="p-8 text-center text-muted-foreground">No products match your filters.</td></tr>}
+              {isLoading && <tr><td colSpan={10} className="p-8 text-center text-muted-foreground">Loading…</td></tr>}
+              {!isLoading && filtered.length === 0 && <tr><td colSpan={10} className="p-8 text-center text-muted-foreground">No products match your filters.</td></tr>}
               {filtered.map((p: any) => (
                 <tr key={p.id} className="border-t border-border hover:bg-muted/30">
                   <td className="p-3"><Checkbox checked={selected.includes(p.id)} onCheckedChange={() => toggle(p.id)} /></td>
@@ -139,6 +156,28 @@ function LibraryPage() {
                     <div className="text-xs text-muted-foreground">{p.product_series}</div>
                   </td>
                   <td className="p-3">{p.modular_type}</td>
+                  <td className="px-4 py-3">
+  <select
+    className="w-full rounded-md border border-border bg-background px-2 py-1 text-xs"
+    value={selectedRatingByProductId[String(p.id)] ?? ""}
+    onChange={(event) =>
+      setSelectedRatingByProductId((current) => ({
+        ...current,
+        [String(p.id)]: event.target.value,
+      }))
+    }
+  >
+    <option value="">Auto</option>
+    {(p.ups_ratings ?? [])
+      .slice()
+      .sort((a: any, b: any) => Number(a.kw ?? 0) - Number(b.kw ?? 0))
+      .map((rating: any) => (
+        <option key={String(rating.id)} value={String(rating.id)}>
+          {rating.rating_label ?? `${rating.kw ?? "-"} kW`}
+        </option>
+      ))}
+  </select>
+</td>
                   <td className="p-3 text-right font-mono">
   {p.min_capacity_kw && p.max_capacity_kw
     ? `${p.min_capacity_kw}-${p.max_capacity_kw}`

@@ -9,18 +9,30 @@ import { Download, X } from "lucide-react";
 import { verificationBadgeClass } from "@/lib/ups";
 import { COMPARE_ROWS, downloadCompareCsv } from "@/lib/compare-csv";
 
-type Search = { ids?: string };
+type Search = { ids?: string; ratings?: string };
 
 export const Route = createFileRoute("/app/compare")({
-  validateSearch: (s: Record<string, unknown>): Search => ({ ids: (s.ids as string) || "" }),
+  validateSearch: (s: Record<string, unknown>): Search => ({
+    ids: (s.ids as string) || "",
+    ratings: (s.ratings as string) || "",
+  }),
   component: ComparePage,
 });
 
 function ComparePage() {
-  const { ids } = Route.useSearch();
+  const { ids, ratings } = Route.useSearch();
   const navigate = Route.useNavigate();
   const idList = (ids ?? "").split(",").filter(Boolean);
-  const [selectedRatingByProductId, setSelectedRatingByProductId] = useState<Record<string, string>>({});
+  const ratingPairs = (ratings ?? "").split(",").filter(Boolean);
+
+const ratingFromUrlByProductId = ratingPairs.reduce<Record<string, string>>((acc, pair) => {
+  const [productId, ratingId] = pair.split(":");
+  if (productId && ratingId) acc[productId] = ratingId;
+  return acc;
+}, {});
+const [selectedRatingByProductId, setSelectedRatingByProductId] = useState<Record<string, string>>(
+  ratingFromUrlByProductId
+);
   const { data: products } = useQuery({
     queryKey: ["compare", idList],
     queryFn: async () => {
