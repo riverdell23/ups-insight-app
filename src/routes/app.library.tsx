@@ -133,20 +133,20 @@ function LibraryPage() {
       </div>
 
       <Card className="p-4">
-        <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-6">
-          <div className="relative lg:col-span-2">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input placeholder="Search vendor or series…" className="pl-9" value={search} onChange={(e) => setSearch(e.target.value)} />
-          </div>
+      <div className="flex flex-wrap items-start gap-3">
+      <div className="relative w-[280px]">
+  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+  <Input className="w-[280px] pl-9" placeholder="Search vendor or series..." value={search} onChange={(e) => setSearch(e.target.value)} />
+</div>
           <Select value={vendor} onValueChange={setVendor}>
-            <SelectTrigger><SelectValue placeholder="Vendor" /></SelectTrigger>
+          <SelectTrigger className="w-[200px]"><SelectValue placeholder="UPS Vendor" /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All vendors</SelectItem>
+              <SelectItem value="all">UPS vendors</SelectItem>
               {vendors?.map((v) => <SelectItem key={v.id} value={v.id}>{v.name}</SelectItem>)}
             </SelectContent>
           </Select>
           <Select value={modular} onValueChange={setModular}>
-            <SelectTrigger><SelectValue placeholder="Type" /></SelectTrigger>
+          <SelectTrigger className="w-[180px]"><SelectValue placeholder="UPS Type" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">UPS Type</SelectItem>
               <SelectItem value="Modular">Modular</SelectItem>
@@ -154,15 +154,30 @@ function LibraryPage() {
             </SelectContent>
           </Select>
           <Select value={battery} onValueChange={setBattery}>
-            <SelectTrigger><SelectValue placeholder="Battery" /></SelectTrigger>
+          <SelectTrigger className="w-[240px]"><SelectValue placeholder="Battery chemistries" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Battery chemistries</SelectItem>
               <SelectItem value="VRLA">VRLA</SelectItem>
               <SelectItem value="Li-ion">Li-ion</SelectItem>
             </SelectContent>
           </Select>
-          <Input className="min-w-[320px]" placeholder="Minimum double-conv. efficiency %" type="number" value={minEff} onChange={(e) => setMinEff(e.target.value)} />
-          <Input className="min-w-[260px]" placeholder="Enter target UPS load (kW)" type="number" value={minCap} onChange={(e) => setMinCap(e.target.value)} />
+
+          <div className="w-full flex flex-wrap gap-3">
+  <Input
+    className="w-[340px]"
+    placeholder="Minimum double-conv. efficiency %"
+    type="number"
+    value={minEff}
+    onChange={(e) => setMinEff(e.target.value)}
+  />
+  <Input
+    className="w-[300px]"
+    placeholder="Enter target UPS load (kW)"
+    type="number"
+    value={minCap}
+    onChange={(e) => setMinCap(e.target.value)}
+  />
+</div>
           
         </div>
       </Card>
