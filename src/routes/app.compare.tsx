@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
@@ -19,7 +20,7 @@ function ComparePage() {
   const { ids } = Route.useSearch();
   const navigate = Route.useNavigate();
   const idList = (ids ?? "").split(",").filter(Boolean);
-
+  const [selectedRatingByProductId, setSelectedRatingByProductId] = useState<Record<string, string>>({});
   const { data: products } = useQuery({
     queryKey: ["compare", idList],
     queryFn: async () => {
@@ -46,10 +47,16 @@ function ComparePage() {
       (a: any, b: any) => Number(a.kw ?? 0) - Number(b.kw ?? 0)
     );
   
-  const getSelectedRating = (product: any) => {
-    const ratings = getSortedRatings(product);
-    return ratings[0] ?? null;
-  };
+    const getSelectedRating = (product: any) => {
+      const ratings = getSortedRatings(product);
+      const selectedRatingId = selectedRatingByProductId[String(product.id)];
+    
+      if (selectedRatingId) {
+        return ratings.find((rating: any) => String(rating.id) === selectedRatingId) ?? ratings[0] ?? null;
+      }
+    
+      return ratings[0] ?? null;
+    };
   const remove = (id: string) => {
     const next = idList.filter((x: string) => x !== id).join(",");
     navigate({ search: { ids: next } });
@@ -90,7 +97,7 @@ function ComparePage() {
     <div className="border-b p-4">
       <h2 className="text-xl font-semibold">Rating-level Comparison</h2>
       <p className="text-sm text-muted-foreground">
-        Compares the first available rating under each selected UPS product series.
+      Select and compare exact UPS ratings under each selected product series.
       </p>
     </div>
 
@@ -115,9 +122,22 @@ function ComparePage() {
                         {(p.vendors as { name?: string })?.name}
                       </div>
                       <div className="font-semibold">{p.product_series}</div>
-                      <div className="text-xs text-muted-foreground mt-1">
-                        Selected rating: {rating?.rating_label ?? "-"}
-                      </div>
+                      <select
+  className="mt-2 w-full rounded-md border border-border bg-background px-2 py-1 text-xs"
+  value={String(rating?.id ?? "")}
+  onChange={(event) =>
+    setSelectedRatingByProductId((current) => ({
+      ...current,
+      [String(p.id)]: event.target.value,
+    }))
+  }
+>
+  {getSortedRatings(p).map((option: any) => (
+    <option key={String(option.id)} value={String(option.id)}>
+      {option.rating_label ?? `${option.kw ?? "-"} kW`}
+    </option>
+  ))}
+</select>
                     </div>
 
                     <button
