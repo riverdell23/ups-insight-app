@@ -42,6 +42,39 @@ function ProductDetail() {
   });
   
   const [selectedRating, setSelectedRating] = useState<any>(null);
+  const physicalData = (() => {
+    const ratingList = ratings ?? [];
+  
+    if (ratingList.length === 0) {
+      return {
+        label: "Physical data: To verify",
+        className: "border-amber-200 bg-amber-50 text-amber-700",
+      };
+    }
+  
+    const completeCount = ratingList.filter(
+      (rating: any) => rating.dimensions && rating.footprint_m2 && rating.weight_kg
+    ).length;
+  
+    if (completeCount === ratingList.length) {
+      return {
+        label: "Physical data: Complete",
+        className: "border-emerald-200 bg-emerald-50 text-emerald-700",
+      };
+    }
+  
+    if (completeCount > 0) {
+      return {
+        label: "Physical data: Partial",
+        className: "border-blue-200 bg-blue-50 text-blue-700",
+      };
+    }
+  
+    return {
+      label: "Physical data: To verify",
+      className: "border-amber-200 bg-amber-50 text-amber-700",
+    };
+  })();
   if (isLoading) return <div className="text-muted-foreground">Loading…</div>;
   if (!product) return <div>Not found</div>;
 
@@ -70,6 +103,9 @@ function ProductDetail() {
           <div className="text-xs uppercase tracking-widest text-muted-foreground">{product.vendors?.name}</div>
           <h1 className="font-display text-4xl font-bold mt-1">{product.product_series}</h1>
           <div className="mt-3 flex flex-wrap gap-2">
+          <Badge variant="outline" className={physicalData.className}>
+  {physicalData.label}
+</Badge>
             <Badge variant="outline" className={verificationBadgeClass(product.verification_status)}>{product.verification_status}</Badge>
             {product.last_verified_date && <Badge variant="outline">Last verified: {product.last_verified_date}</Badge>}
             {product.verifier && (
