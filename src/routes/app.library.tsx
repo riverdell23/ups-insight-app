@@ -261,7 +261,15 @@ function LibraryPage() {
   })()}
 </td>
                   <td className="p-3"><Badge variant="outline" className={verificationBadgeClass(p.verification_status)}>{p.verification_status}</Badge></td>
-                  <td className="p-3"><Link to="/app/products/$id" params={{ id: p.id }}><Button variant="ghost" size="sm">View</Button></Link></td>
+                  <td className="p-3">
+  <Button
+    variant="ghost"
+    size="sm"
+    onClick={() => navigate({ to: "/app/products/$id", params: { id: p.id } })}
+  >
+    View
+  </Button>
+</td>
                 </tr>
               ))}
             </tbody>
