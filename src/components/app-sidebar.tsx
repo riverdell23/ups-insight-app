@@ -1,5 +1,5 @@
 import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
-import { LayoutDashboard, Library, GitCompare, ClipboardList, Shield, LogOut, Zap } from "lucide-react";
+import { Library, ClipboardList, Shield, LogOut, Zap } from "lucide-react";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel,
   SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarHeader, SidebarFooter,
@@ -8,9 +8,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 
 const items = [
-  { title: "Dashboard", url: "/app", icon: LayoutDashboard },
+  
   { title: "UPS Library", url: "/app/library", icon: Library },
-  { title: "Compare", url: "/app/compare", icon: GitCompare },
+  
   { title: "Enquiry Checklist", url: "/app/checklist", icon: ClipboardList },
 ];
 
