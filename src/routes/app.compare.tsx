@@ -57,6 +57,59 @@ function ComparePage() {
     
       return ratings[0] ?? null;
     };
+    const csvEscape = (value: unknown) => {
+      const text = display(value);
+      return `"${text.replace(/"/g, '""')}"`;
+    };
+    
+    const downloadRatingCompareCsv = () => {
+      const selectedProducts = productList;
+    
+      const headers = [
+        "Spec",
+        ...selectedProducts.map((p: any) => {
+          const rating = getSelectedRating(p);
+          const vendor = (p.vendors as { name?: string })?.name ?? "";
+          return `${vendor} - ${p.product_series} - ${rating?.rating_label ?? ""}`;
+        }),
+      ];
+    
+      const rows = [
+        ["Vendor", (p: any) => (p.vendors as { name?: string })?.name],
+        ["Product series", (p: any) => p.product_series],
+        ["Selected rating", (p: any) => getSelectedRating(p)?.rating_label],
+        ["kVA", (p: any) => getSelectedRating(p)?.kva],
+        ["kW", (p: any) => getSelectedRating(p)?.kw],
+        ["Efficiency", (p: any) => getSelectedRating(p)?.efficiency],
+        ["Dimensions", (p: any) => getSelectedRating(p)?.dimensions],
+        ["Footprint m²", (p: any) => getSelectedRating(p)?.footprint_m2],
+        ["Weight kg", (p: any) => getSelectedRating(p)?.weight_kg],
+        ["Battery option", (p: any) => getSelectedRating(p)?.battery_option],
+        ["Datasheet/source", (p: any) =>
+          getSelectedRating(p)?.datasheet_url ? getSelectedRating(p)?.datasheet_url : "-"
+        ],
+      ];
+    
+      const csvRows = [
+        headers.map(csvEscape).join(","),
+        ...rows.map(([label, getter]: any) =>
+          [label, ...selectedProducts.map((p: any) => getter(p))]
+            .map(csvEscape)
+            .join(",")
+        ),
+      ];
+    
+      const blob = new Blob([csvRows.join("\n")], {
+        type: "text/csv;charset=utf-8;",
+      });
+    
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `ups-rating-compare-${new Date().toISOString().slice(0, 10)}.csv`;
+      link.click();
+      URL.revokeObjectURL(url);
+    };
   const remove = (id: string) => {
     const next = idList.filter((x: string) => x !== id).join(",");
     navigate({ search: { ids: next } });
@@ -86,7 +139,7 @@ function ComparePage() {
             variant="outline"
             size="sm"
             className="gap-1"
-            onClick={() => downloadCompareCsv(products as Record<string, unknown>[])}
+            onClick={downloadRatingCompareCsv}
           >
             <Download className="h-4 w-4" /> Export CSV
           </Button>
