@@ -26,12 +26,30 @@ function ComparePage() {
       if (idList.length === 0) return [];
       const { data } = await supabase
         .from("ups_products")
-        .select("*, vendors(name), verifier:profiles!ups_products_last_verified_by_fkey(full_name, email)")
+        .select(`
+          *,
+          vendors(name),
+          verifier:profiles!ups_products_last_verified_by_fkey(full_name, email),
+          ups_ratings(*)
+        `)
         .in("id", idList);
       return data ?? [];
     },
   });
-
+  const display = (value: unknown) =>
+    value === null || value === undefined || value === "" ? "-" : String(value);
+  
+  const productList = (products ?? []) as any[];
+  
+  const getSortedRatings = (product: any) =>
+    [...(product.ups_ratings ?? [])].sort(
+      (a: any, b: any) => Number(a.kw ?? 0) - Number(b.kw ?? 0)
+    );
+  
+  const getSelectedRating = (product: any) => {
+    const ratings = getSortedRatings(product);
+    return ratings[0] ?? null;
+  };
   const remove = (id: string) => {
     const next = idList.filter((x: string) => x !== id).join(",");
     navigate({ search: { ids: next } });
@@ -67,7 +85,91 @@ function ComparePage() {
           </Button>
         )}
       </div>
+      {productList.length > 0 && (
+  <Card className="mb-6 overflow-hidden">
+    <div className="border-b p-4">
+      <h2 className="text-xl font-semibold">Rating-level Comparison</h2>
+      <p className="text-sm text-muted-foreground">
+        Compares the first available rating under each selected UPS product series.
+      </p>
+    </div>
 
+    <div className="overflow-x-auto">
+      <table className="w-full text-sm border-collapse">
+        <thead>
+          <tr>
+            <th className="text-left p-4 bg-muted/50 sticky left-0 z-10 min-w-[180px]">
+              Spec
+            </th>
+            {productList.map((p: any) => {
+              const rating = getSelectedRating(p);
+
+              return (
+                <th
+                  key={String(p.id)}
+                  className="text-left p-4 border-l border-border bg-card min-w-[240px] align-top"
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <div className="text-xs text-muted-foreground uppercase tracking-widest">
+                        {(p.vendors as { name?: string })?.name}
+                      </div>
+                      <div className="font-semibold">{p.product_series}</div>
+                      <div className="text-xs text-muted-foreground mt-1">
+                        Selected rating: {rating?.rating_label ?? "-"}
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      className="text-muted-foreground hover:text-foreground"
+                      onClick={() => remove(String(p.id))}
+                    >
+                      ×
+                    </button>
+                  </div>
+                </th>
+              );
+            })}
+          </tr>
+        </thead>
+
+        <tbody>
+          {[
+            ["Rating", (r: any) => r?.rating_label],
+            ["kVA", (r: any) => r?.kva],
+            ["kW", (r: any) => r?.kw],
+            ["Efficiency", (r: any) => r?.efficiency],
+            ["Dimensions", (r: any) => r?.dimensions],
+            ["Footprint m²", (r: any) => r?.footprint_m2],
+            ["Weight kg", (r: any) => r?.weight_kg],
+            ["Battery option", (r: any) => r?.battery_option],
+            ["Datasheet/source", (r: any) => (r?.datasheet_url ? "Available" : "-")],
+          ].map(([label, getter]: any) => (
+            <tr key={label} className="border-t border-border">
+              <td className="p-4 font-medium bg-muted/30 sticky left-0 z-10">
+                {label}
+              </td>
+
+              {productList.map((p: any) => {
+                const rating = getSelectedRating(p);
+
+                return (
+                  <td
+                    key={String(p.id)}
+                    className="p-4 border-l border-border align-top"
+                  >
+                    {display(getter(rating))}
+                  </td>
+                );
+              })}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </Card>
+)}
       <Card className="overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm border-collapse">
