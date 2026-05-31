@@ -149,15 +149,23 @@ const [selectedRatingByProductId, setSelectedRatingByProductId] = useState<Recor
 </p>
         </div>
         {products && products.length > 0 && (
-          <Button
-            variant="outline"
-            size="sm"
-            className="gap-1"
-            onClick={downloadRatingCompareCsv}
-          >
-            <Download className="h-4 w-4" /> Export Selected Rating CSV
-          </Button>
-        )}
+  <div className="flex flex-wrap gap-2">
+    <Link to="/app/library" search={{ ids: idList.join(",") }}>
+      <Button variant="outline" size="sm">
+      Add More From Library
+      </Button>
+    </Link>
+
+    <Button
+      variant="outline"
+      size="sm"
+      className="gap-1"
+      onClick={downloadRatingCompareCsv}
+    >
+      <Download className="h-4 w-4" /> Export Selected Rating CSV
+    </Button>
+  </div>
+)}
       </div>
       {productList.length > 0 && (
   <Card className="mb-6 overflow-hidden">
@@ -323,7 +331,7 @@ const [selectedRatingByProductId, setSelectedRatingByProductId] = useState<Recor
       </Card>
 
       <Link to="/app/library" search={{ ids: idList.join(",") }}>
-        <Button variant="outline">Add more from library</Button>
+        <Button variant="outline">Add More From Library</Button>
       </Link>
     </div>
   );
