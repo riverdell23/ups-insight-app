@@ -217,8 +217,18 @@ window.location.href = `/app/compare?${params.toString()}`;
                 <tr key={p.id} className="border-t border-border hover:bg-muted/30">
                   <td className="p-3"><Checkbox checked={selected.includes(p.id)} onCheckedChange={() => toggle(p.id)} /></td>
                   <td className="p-3">
-                    <Link to="/app/products/$id" params={{ id: p.id }} className="font-medium hover:text-accent">{p.vendors?.name}</Link>
-                    <div className="text-xs text-muted-foreground">{p.product_series}</div>
+                  <Link
+  to="/app/products/$id"
+  params={{ id: p.id }}
+  className="group cursor-pointer inline-block"
+>
+  <div className="font-medium group-hover:underline underline-offset-4 group-hover:text-primary">
+    {p.vendors?.name}
+  </div>
+  <div className="text-xs text-muted-foreground font-medium group-hover:underline underline-offset-4 group-hover:text-primary">
+    {p.product_series}
+  </div>
+</Link>
                   </td>
                   
                   <td className="px-4 py-3">
