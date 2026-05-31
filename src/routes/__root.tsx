@@ -36,9 +36,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "DC UPS Benchmark — Vendor-Neutral UPS Comparison for Data Centres" },
+      { title: "UPS Wonderbook — Vendor-Neutral UPS Consultant Workspace" },
       { name: "description", content: "Compare data centre UPS products from leading vendors. Built for electrical consultants — benchmark efficiency, capacity, topology and footprint before contacting vendors." },
-      { property: "og:title", content: "DC UPS Benchmark" },
+      { property: "og:title", content: "UPS Wonderbook" },
       { property: "og:description", content: "Vendor-neutral UPS product intelligence for data centre consultants." },
       { property: "og:type", content: "website" },
     ],

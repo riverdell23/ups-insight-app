@@ -32,8 +32,8 @@ export function AppSidebar() {
             <Zap className="h-5 w-5 text-accent-foreground" />
           </div>
           <div className="flex flex-col">
-            <span className="font-display text-sm font-semibold leading-tight">DC UPS</span>
-            <span className="text-[10px] uppercase tracking-wider text-sidebar-foreground/60">Benchmark</span>
+            <span className="font-display text-sm font-semibold leading-tight">UPS</span>
+            <span className="text-[10px] uppercase tracking-wider text-sidebar-foreground/60">Wonderbook</span>
           </div>
         </Link>
       </SidebarHeader>

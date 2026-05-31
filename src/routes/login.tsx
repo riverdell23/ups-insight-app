@@ -10,7 +10,7 @@ import { toast } from "sonner";
 import { Zap } from "lucide-react";
 
 export const Route = createFileRoute("/login")({
-  head: () => ({ meta: [{ title: "Sign in — DC UPS Benchmark" }] }),
+  head: () => ({ meta: [{ title: "Sign in — UPS Wonderbook" }] }),
   component: LoginPage,
 });
 
@@ -54,7 +54,7 @@ function LoginPage() {
       <div className="hidden lg:flex flex-col justify-between bg-primary text-primary-foreground p-12">
         <Link to="/" className="flex items-center gap-2">
           <div className="flex h-9 w-9 items-center justify-center rounded-md bg-accent"><Zap className="h-5 w-5" /></div>
-          <span className="font-display font-semibold">DC UPS Benchmark</span>
+          <span className="font-display font-semibold">UPS Wonderbook</span>
         </Link>
         <div className="space-y-4">
           <h2 className="font-display text-4xl font-bold leading-tight">Spec intelligence for data centre electrical consultants.</h2>
@@ -67,7 +67,7 @@ function LoginPage() {
         <Card className="w-full max-w-md p-8">
           <div className="lg:hidden mb-6 flex items-center gap-2">
             <div className="flex h-9 w-9 items-center justify-center rounded-md bg-primary"><Zap className="h-5 w-5 text-primary-foreground" /></div>
-            <span className="font-display font-semibold">DC UPS Benchmark</span>
+            <span className="font-display font-semibold">UPS Wonderbook</span>
           </div>
           <h1 className="font-display text-2xl font-bold">Access the platform</h1>
           <p className="mt-2 text-sm text-muted-foreground">Sign in to access the UPS library, comparisons and admin tools.</p>
