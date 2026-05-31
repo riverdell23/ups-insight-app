@@ -207,7 +207,7 @@ window.location.href = `/app/compare?${params.toString()}`;
                 <th className="text-left p-3">Battery Type</th>
                 <th className="text-left p-3">Physical Data</th>
                 <th className="text-left p-3">Status</th>
-                <th className="p-3"></th>
+               
               </tr>
             </thead>
             <tbody>
@@ -271,15 +271,7 @@ window.location.href = `/app/compare?${params.toString()}`;
   })()}
 </td>
                   <td className="p-3"><Badge variant="outline" className={verificationBadgeClass(p.verification_status)}>{p.verification_status}</Badge></td>
-                  <td className="p-3">
-  <Button
-    variant="ghost"
-    size="sm"
-    onClick={() => navigate({ to: "/app/products/$id", params: { id: p.id } })}
-  >
-    View
-  </Button>
-</td>
+
                 </tr>
               ))}
             </tbody>
