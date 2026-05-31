@@ -92,11 +92,11 @@ const [selectedRatingByProductId, setSelectedRatingByProductId] = useState<Recor
         ["Selected rating", (p: any) => getSelectedRating(p)?.rating_label],
         ["kVA", (p: any) => getSelectedRating(p)?.kva],
         ["kW", (p: any) => getSelectedRating(p)?.kw],
-        ["Efficiency", (p: any) => getSelectedRating(p)?.efficiency],
-        ["Dimensions", (p: any) => getSelectedRating(p)?.dimensions],
-        ["Footprint m²", (p: any) => getSelectedRating(p)?.footprint_m2],
-        ["Weight kg", (p: any) => getSelectedRating(p)?.weight_kg],
-        ["Battery option", (p: any) => getSelectedRating(p)?.battery_option],
+        ["Efficiency", (p: any) => getSelectedRating(p)?.efficiency ?? "To verify"],
+        ["Dimensions", (p: any) => getSelectedRating(p)?.dimensions ?? "To verify"],
+        ["Footprint (m²)", (p: any) => getSelectedRating(p)?.footprint_m2 ?? "To verify"],
+        ["Weight (kg)", (p: any) => getSelectedRating(p)?.weight_kg ?? "To verify"],
+        ["Battery option", (p: any) => getSelectedRating(p)?.battery_option ?? "To verify"],
         ["Datasheet/source", (p: any) =>
           getSelectedRating(p)?.datasheet_url ? getSelectedRating(p)?.datasheet_url : "-"
         ],
@@ -130,8 +130,10 @@ const [selectedRatingByProductId, setSelectedRatingByProductId] = useState<Recor
   if (idList.length === 0) {
     return (
       <div className="max-w-2xl">
-        <h1 className="font-display text-3xl font-bold">Compare</h1>
-        <p className="text-muted-foreground mt-2">Pick 2–4 products from the library to compare side-by-side.</p>
+        <h1 className="font-display text-3xl font-bold">Compare UPS Ratings</h1>
+<p className="text-muted-foreground mt-2">
+  Select 2–4 UPS products from the Library to compare selected ratings side-by-side.
+</p>
         <Link to="/app/library" className="mt-6 inline-block">
           <Button>Browse library</Button>
         </Link>
@@ -143,8 +145,10 @@ const [selectedRatingByProductId, setSelectedRatingByProductId] = useState<Recor
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="font-display text-3xl font-bold">Compare</h1>
-          <p className="text-muted-foreground mt-1">{idList.length} of 4 products</p>
+        <h1 className="font-display text-3xl font-bold">Compare UPS Ratings</h1>
+<p className="text-muted-foreground mt-1">
+  {idList.length} of 4 products selected. Comparison is for preliminary screening only. Verify latest manufacturer datasheets before design use.
+</p>
         </div>
         {products && products.length > 0 && (
           <Button
@@ -224,11 +228,11 @@ const [selectedRatingByProductId, setSelectedRatingByProductId] = useState<Recor
             ["Rating", (r: any) => r?.rating_label],
             ["kVA", (r: any) => r?.kva],
             ["kW", (r: any) => r?.kw],
-            ["Efficiency", (r: any) => r?.efficiency],
-            ["Dimensions", (r: any) => r?.dimensions],
-            ["Footprint m²", (r: any) => r?.footprint_m2],
-            ["Weight kg", (r: any) => r?.weight_kg],
-            ["Battery option", (r: any) => r?.battery_option],
+            ["Efficiency", (r: any) => r?.efficiency ?? "To verify"],
+            ["Dimensions", (r: any) => r?.dimensions ?? "To verify"],
+            ["Footprint (m²)", (r: any) => r?.footprint_m2 ?? "To verify"],
+            ["Weight (kg)", (r: any) => r?.weight_kg ?? "To verify"],
+            ["Battery option", (r: any) => r?.battery_option ?? "To verify"],
             ["Datasheet/source", (r: any) => (r?.datasheet_url ? "Available" : "-")],
           ].map(([label, getter]: any) => (
             <tr key={label} className="border-t border-border">
