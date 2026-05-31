@@ -322,7 +322,7 @@ const [selectedRatingByProductId, setSelectedRatingByProductId] = useState<Recor
         </div>
       </Card>
 
-      <Link to="/app/library">
+      <Link to="/app/library" search={{ ids: idList.join(",") }}>
         <Button variant="outline">Add more from library</Button>
       </Link>
     </div>

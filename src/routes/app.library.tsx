@@ -17,14 +17,16 @@ export const Route = createFileRoute("/app/library")({ component: LibraryPage })
 
 function LibraryPage() {
   const { isAdmin } = useAuth();
-  const navigate = useNavigate();
+  const searchParams = Route.useSearch() as { ids?: string };
   const [search, setSearch] = useState("");
   const [vendor, setVendor] = useState<string>("all");
   const [modular, setModular] = useState<string>("all");
   const [battery, setBattery] = useState<string>("all");
   const [minCap, setMinCap] = useState("");
   const [minEff, setMinEff] = useState("");
-  const [selected, setSelected] = useState<string[]>([]);
+  const [selected, setSelected] = useState<string[]>(
+    searchParams.ids ? searchParams.ids.split(",").filter(Boolean) : []
+  );
   const [selectedRatingByProductId, setSelectedRatingByProductId] = useState<Record<string, string>>({});
 
   const { data: vendors } = useQuery({
@@ -117,13 +119,11 @@ if (normalizedSearch && !searchTerms.some((term) => searchText.includes(term))) 
       .filter(Boolean)
       .join(",");
   
-    navigate({
-      to: "/app/compare",
-      search: {
-        ids: selected.join(","),
-        ratings: selectedRatings,
-      },
-    });
+      const params = new URLSearchParams();
+params.set("ids", selected.join(","));
+if (selectedRatings) params.set("ratings", selectedRatings);
+window.location.href = `/app/compare?${params.toString()}`;
+  
   };
 
   return (
