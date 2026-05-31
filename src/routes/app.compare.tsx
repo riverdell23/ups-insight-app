@@ -97,9 +97,7 @@ const [selectedRatingByProductId, setSelectedRatingByProductId] = useState<Recor
         ["Footprint (m²)", (p: any) => getSelectedRating(p)?.footprint_m2 ?? "To verify"],
         ["Weight (kg)", (p: any) => getSelectedRating(p)?.weight_kg ?? "To verify"],
         ["Battery option", (p: any) => getSelectedRating(p)?.battery_option ?? "To verify"],
-        ["Datasheet/source", (p: any) =>
-          getSelectedRating(p)?.datasheet_url ? getSelectedRating(p)?.datasheet_url : "-"
-        ],
+        ["Datasheet/source", (p: any) => getSelectedRating(p)?.datasheet_url ?? "To verify"],
       ];
     
       const csvRows = [
@@ -233,7 +231,7 @@ const [selectedRatingByProductId, setSelectedRatingByProductId] = useState<Recor
             ["Footprint (m²)", (r: any) => r?.footprint_m2 ?? "To verify"],
             ["Weight (kg)", (r: any) => r?.weight_kg ?? "To verify"],
             ["Battery option", (r: any) => r?.battery_option ?? "To verify"],
-            ["Datasheet/source", (r: any) => (r?.datasheet_url ? "Available" : "-")],
+            ["Datasheet/source", (r: any) => r?.datasheet_url ?? "To verify"],
           ].map(([label, getter]: any) => (
             <tr key={label} className="border-t border-border">
               <td className="p-4 font-medium bg-muted/30 sticky left-0 z-10">
@@ -248,7 +246,18 @@ const [selectedRatingByProductId, setSelectedRatingByProductId] = useState<Recor
                     key={String(p.id)}
                     className="p-4 border-l border-border align-top"
                   >
-                    {display(getter(rating))}
+                  {label === "Datasheet/source" && getter(rating) !== "To verify" ? (
+  <a
+    href={String(getter(rating))}
+    target="_blank"
+    rel="noreferrer"
+    className="underline underline-offset-4 text-primary"
+  >
+    Source
+  </a>
+) : (
+  display(getter(rating))
+)}
                   </td>
                 );
               })}
