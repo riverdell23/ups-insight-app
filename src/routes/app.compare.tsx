@@ -19,6 +19,76 @@ export const Route = createFileRoute("/app/compare")({
   component: ComparePage,
 });
 
+function getDoubleConversionEff(value?: string | null) {
+  if (!value) return "-";
+
+  const text = value.trim();
+  const match = text.match(/([\d.]+)%\s*double/i);
+
+  return match ? `${match[1]}%` : "-";
+}
+
+function getEcoModeEff(value?: string | null) {
+  if (!value) return "-";
+
+  const text = value.trim();
+
+  const essMatch = text.match(/([\d.]+)%\s*ESS/i);
+  const ecoMatch = text.match(/([\d.]+)%\s*Eco/i);
+  const eConversionMatch = text.match(/([\d.]+)%\s*eConversion/i);
+
+  if (essMatch) return `${essMatch[1]}%`;
+  if (ecoMatch) return `${ecoMatch[1]}%`;
+  if (eConversionMatch) return `${eConversionMatch[1]}%`;
+
+  return "-";
+}
+
+function formatDimensionsMetric(value?: string | null) {
+  if (!value) return "-";
+
+  const text = value.trim();
+
+  // Already shortened format: 550 x 800 x 1450
+  const shortMetricMatch = text.match(/^([\d.]+)\s*x\s*([\d.]+)\s*x\s*([\d.]+)$/i);
+  if (shortMetricMatch) {
+    return `${shortMetricMatch[1]} x ${shortMetricMatch[2]} x ${shortMetricMatch[3]}`;
+  }
+
+  // Metric format: 550 mm W x 800 mm D x 1450 mm H
+  const metricMatch = text.match(
+    /([\d.]+)\s*mm\s*W\s*x\s*([\d.]+)\s*mm\s*D\s*x\s*([\d.]+)\s*mm\s*H/i
+  );
+  if (metricMatch) {
+    return `${metricMatch[1]} x ${metricMatch[2]} x ${metricMatch[3]}`;
+  }
+
+  // Imperial format: 93.5 in W x 33.5 in D x 78.9 in H
+  const inchMatch = text.match(
+    /([\d.]+)\s*in\s*W\s*x\s*([\d.]+)\s*in\s*D\s*x\s*([\d.]+)\s*in\s*H/i
+  );
+  if (inchMatch) {
+    const widthMm = Math.round(Number(inchMatch[1]) * 25.4);
+    const depthMm = Math.round(Number(inchMatch[2]) * 25.4);
+    const heightMm = Math.round(Number(inchMatch[3]) * 25.4);
+
+    return `${widthMm} x ${depthMm} x ${heightMm}`;
+  }
+
+  return text;
+}
+
+function getPowerDensityKwPerM2(rating?: any) {
+  if (!rating?.kw || !rating?.footprint_m2) return "-";
+
+  const kw = Number(rating.kw);
+  const footprint = Number(rating.footprint_m2);
+
+  if (!kw || !footprint) return "-";
+
+  return `${Math.round((kw / footprint) * 10) / 10}`;
+}
+
 function ComparePage() {
   const { ids, ratings } = Route.useSearch();
   const navigate = Route.useNavigate();
@@ -92,11 +162,13 @@ const [selectedRatingByProductId, setSelectedRatingByProductId] = useState<Recor
         ["Selected rating", (p: any) => getSelectedRating(p)?.rating_label],
         ["kVA", (p: any) => getSelectedRating(p)?.kva],
         ["kW", (p: any) => getSelectedRating(p)?.kw],
-        ["Efficiency", (p: any) => getSelectedRating(p)?.efficiency ?? "To verify"],
-        ["Dimensions", (p: any) => getSelectedRating(p)?.dimensions ?? "To verify"],
+        ["Double-Conversion Eff.", (p: any) => getDoubleConversionEff(getSelectedRating(p)?.efficiency)],
+["Eco Mode Eff.", (p: any) => getEcoModeEff(getSelectedRating(p)?.efficiency)],
+["Dimensions (mmW x mmD x mmH)", (p: any) => formatDimensionsMetric(getSelectedRating(p)?.dimensions)],
         ["Footprint (m²)", (p: any) => getSelectedRating(p)?.footprint_m2 ?? "To verify"],
+        ["Power density (kW/m²)", (p: any) => getPowerDensityKwPerM2(getSelectedRating(p))],
         ["Weight (kg)", (p: any) => getSelectedRating(p)?.weight_kg ?? "To verify"],
-        ["Battery option", (p: any) => getSelectedRating(p)?.battery_option ?? "To verify"],
+        
         ["Datasheet/source", (p: any) => getSelectedRating(p)?.datasheet_url ?? "To verify"],
       ];
     
@@ -234,11 +306,13 @@ const [selectedRatingByProductId, setSelectedRatingByProductId] = useState<Recor
             ["Rating", (r: any) => r?.rating_label],
             ["kVA", (r: any) => r?.kva],
             ["kW", (r: any) => r?.kw],
-            ["Efficiency", (r: any) => r?.efficiency ?? "To verify"],
-            ["Dimensions", (r: any) => r?.dimensions ?? "To verify"],
+            ["Double-Conversion Eff.", (r: any) => getDoubleConversionEff(r?.efficiency)],
+["Eco Mode Eff.", (r: any) => getEcoModeEff(r?.efficiency)],
+["Dimensions (mmW x mmD x mmH)", (r: any) => formatDimensionsMetric(r?.dimensions)],
             ["Footprint (m²)", (r: any) => r?.footprint_m2 ?? "To verify"],
+            ["Power density (kW/m²)", (r: any) => getPowerDensityKwPerM2(r)],
             ["Weight (kg)", (r: any) => r?.weight_kg ?? "To verify"],
-            ["Battery option", (r: any) => r?.battery_option ?? "To verify"],
+           
             ["Datasheet/source", (r: any) => r?.datasheet_url ?? "To verify"],
           ].map(([label, getter]: any) => (
             <tr key={label} className="border-t border-border">
@@ -277,7 +351,7 @@ const [selectedRatingByProductId, setSelectedRatingByProductId] = useState<Recor
   </Card>
 )}
       <Card className="overflow-hidden">
-        <div className="overflow-x-auto">
+      <div className="hidden">
           <table className="w-full text-sm border-collapse">
             <thead>
               <tr>
