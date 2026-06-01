@@ -10,6 +10,50 @@ import { verificationBadgeClass } from "@/lib/ups";
 
 export const Route = createFileRoute("/app/products/$id")({ component: ProductDetail });
 
+function getDoubleConversionEff(value?: string | null) {
+  if (!value) return "-";
+
+  const text = value.trim();
+  const match = text.match(/([\d.]+)%\s*double/i);
+
+  return match ? `${match[1]}%` : "-";
+}
+
+function getEcoModeEff(value?: string | null) {
+  if (!value) return "-";
+
+  const text = value.trim();
+  const essMatch = text.match(/([\d.]+)%\s*ESS/i);
+  const ecoMatch = text.match(/([\d.]+)%\s*eco/i);
+
+  if (essMatch) return `${essMatch[1]}%`;
+  if (ecoMatch) return `${ecoMatch[1]}%`;
+
+  return "-";
+}
+
+
+function formatDimensionsMetric(value?: string | null) {
+
+  
+  if (!value) return "-";
+
+  const text = value.trim();
+
+  // Convert format like: 93.5 in W x 33.5 in D x 78.9 in H
+  const match = text.match(
+    /([\d.]+)\s*in\s*W\s*x\s*([\d.]+)\s*in\s*D\s*x\s*([\d.]+)\s*in\s*H/i
+  );
+
+  if (!match) return text;
+
+  const widthMm = Math.round(Number(match[1]) * 25.4);
+  const depthMm = Math.round(Number(match[2]) * 25.4);
+  const heightMm = Math.round(Number(match[3]) * 25.4);
+
+  return `${widthMm} x ${depthMm} x ${heightMm}`;
+}
+
 function ProductDetail() {
   const { id } = Route.useParams();
   const { data: product, isLoading } = useQuery({
@@ -86,16 +130,11 @@ function ProductDetail() {
     ["Double-conversion efficiency", `${product.double_conversion_efficiency}%`],
     ["Eco-mode efficiency", `${product.eco_mode_efficiency}%`],
     ["Battery type", product.battery_type],
-    ["Footprint (m²)", product.footprint_area_m2],
-    ["Power density (kW/m²)", product.power_density_kw_per_m2],
-    ["Access requirement", product.access_requirement],
-    ["Monitoring protocols", product.monitoring_protocol],
-    ["Region availability", product.region_availability],
-    ["Region availability (detail)", product.region_availability_detail],
+
   ];
 
   return (
-    <div className="space-y-6 max-w-6xl">
+    <div className="space-y-6 w-full">
       <Link to="/app/library"><Button variant="ghost" size="sm" className="gap-2"><ArrowLeft className="h-4 w-4" /> Back to library</Button></Link>
 
       <div className="flex flex-wrap items-start justify-between gap-4">
@@ -139,7 +178,7 @@ function ProductDetail() {
             ))}
           </dl>
         </Card>
-        <Card className="lg:col-span-3 p-6">
+        <Card className="lg:col-span-3 p-6 w-full">
         <div className="mb-4">
   <h2 className="font-display text-lg font-semibold">Available Ratings</h2>
   <p className="mt-1 text-sm text-muted-foreground">
@@ -157,8 +196,9 @@ function ProductDetail() {
             <th className="py-2 pr-4">Rating</th>
             <th className="py-2 pr-4">kVA</th>
             <th className="py-2 pr-4">kW</th>
-            <th className="py-2 pr-4">Efficiency</th>
-            <th className="py-2 pr-4">Dimensions</th>
+            <th className="py-2 pr-4 whitespace-nowrap">Double-Conversion Eff.</th>
+<th className="py-2 pr-4 whitespace-nowrap">Eco Mode Eff.</th>
+            <th className="py-2 pr-4">Dimensions (mmW x mmD x mmH)</th>
             <th className="py-2 pr-4">Footprint</th>
             <th className="py-2 pr-4">Weight</th>
             <th className="py-2 pr-4">Battery option</th>
@@ -173,11 +213,18 @@ function ProductDetail() {
               className="border-b hover:bg-muted/40 cursor-pointer"
               onClick={() => setSelectedRating(rating)}
             >
-              <td className="py-3 pr-4 font-medium">{rating.rating_label ?? "-"}</td>
+              <td className="py-3 pr-4 font-medium whitespace-nowrap">{rating.rating_label ?? "-"}</td>
               <td className="py-3 pr-4">{rating.kva ?? "-"}</td>
               <td className="py-3 pr-4">{rating.kw ?? "-"}</td>
-              <td className="py-3 pr-4">{rating.efficiency ?? "-"}</td>
-              <td className="py-3 pr-4">{rating.dimensions ?? "-"}</td>
+              
+              <td className="py-3 pr-4 whitespace-nowrap">
+  {getDoubleConversionEff(rating.efficiency)}
+</td>
+<td className="py-3 pr-4 whitespace-nowrap">
+  {getEcoModeEff(rating.efficiency)}
+</td>
+              
+              <td className="py-3 pr-4">{formatDimensionsMetric(rating.dimensions)}</td>
               <td className="py-3 pr-4">{rating.footprint_m2 ?? "-"}</td>
               <td className="py-3 pr-4">{rating.weight_kg ?? "-"}</td>
               <td className="py-3 pr-4">{rating.battery_option ?? "-"}</td>
@@ -195,7 +242,7 @@ function ProductDetail() {
                   "-"
                 )}
               </td>
-              <td className="py-3 pr-4">{rating.last_updated ?? "-"}</td>
+              <td className="py-3 pr-4 whitespace-nowrap">{rating.last_updated ?? "-"}</td>
             </tr>
           ))}
         </tbody>
@@ -203,37 +250,7 @@ function ProductDetail() {
     </div>
   )}
 
-  {selectedRating && (
-    <div className="mt-6 rounded-xl border p-4 bg-muted/20">
-      <h3 className="font-semibold mb-3">Selected rating details</h3>
-      <div className="grid md:grid-cols-2 gap-3 text-sm">
-        <div><span className="text-muted-foreground">Rating:</span> {selectedRating.rating_label ?? "-"}</div>
-        <div><span className="text-muted-foreground">kVA:</span> {selectedRating.kva ?? "-"}</div>
-        <div><span className="text-muted-foreground">kW:</span> {selectedRating.kw ?? "-"}</div>
-        <div><span className="text-muted-foreground">Efficiency:</span> {selectedRating.efficiency ?? "-"}</div>
-        <div><span className="text-muted-foreground">Dimensions:</span> {selectedRating.dimensions ?? "-"}</div>
-        <div><span className="text-muted-foreground">Footprint:</span> {selectedRating.footprint_m2 ?? "-"} m²</div>
-        <div><span className="text-muted-foreground">Weight:</span> {selectedRating.weight_kg ?? "-"} kg</div>
-        <div><span className="text-muted-foreground">Battery option:</span> {selectedRating.battery_option ?? "-"}</div>
-        <div><span className="text-muted-foreground">Last updated:</span> {selectedRating.last_updated ?? "-"}</div>
-        <div>
-          <span className="text-muted-foreground">Source:</span>{" "}
-          {selectedRating.datasheet_url ? (
-            <a
-              href={selectedRating.datasheet_url}
-              target="_blank"
-              rel="noreferrer"
-              className="underline"
-            >
-              {selectedRating.source_title ?? "Datasheet/source"}
-            </a>
-          ) : (
-            "-"
-          )}
-        </div>
-      </div>
-    </div>
-  )}
+ 
 </Card>
         <Card className="p-6 h-fit">
           <h2 className="font-display text-lg font-semibold mb-4">Sources</h2>
