@@ -57,7 +57,7 @@ function LoginPage() {
           <span className="font-display font-semibold">UPS Wonderbook</span>
         </Link>
         <div className="space-y-4">
-          <h2 className="font-display text-4xl font-bold leading-tight">Spec intelligence for data centre electrical consultants.</h2>
+          <h2 className="font-display text-4xl font-bold leading-tight">UPS product intelligence for electrical consultants.</h2>
           <p className="text-primary-foreground/70 max-w-md">Compare UPS products from Schneider, Vertiv, Eaton, ABB, Huawei and more — vendor-neutral, source-cited.</p>
         </div>
         <div className="text-xs text-primary-foreground/50">For preliminary benchmarking only. Verify with certified vendor data.</div>
@@ -70,7 +70,7 @@ function LoginPage() {
             <span className="font-display font-semibold">UPS Wonderbook</span>
           </div>
           <h1 className="font-display text-2xl font-bold">Access the platform</h1>
-          <p className="mt-2 text-sm text-muted-foreground">Sign in to access the UPS library, comparisons and admin tools.</p>
+          <p className="mt-2 text-sm text-muted-foreground">Sign in to access the UPS library, comparisons and enquiry checklist.</p>
 
           <Tabs defaultValue="signin" className="mt-6">
             <TabsList className="grid w-full grid-cols-2">
