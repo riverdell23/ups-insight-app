@@ -25,8 +25,8 @@ function Landing() {
               <Zap className="h-5 w-5 text-primary-foreground" />
             </div>
             <div className="leading-tight">
-              <div className="font-display font-semibold text-base">DC UPS Benchmark</div>
-              <div className="text-[10px] uppercase tracking-widest text-muted-foreground">Consultant Intelligence</div>
+              <div className="font-display font-semibold text-base">UPS Wonderbook</div>
+              <div className="text-[10px] uppercase tracking-widest text-muted-foreground">Consultant Workspace</div>
             </div>
           </Link>
           <nav className="hidden md:flex items-center gap-8 text-sm text-muted-foreground">
@@ -50,10 +50,10 @@ function Landing() {
               <span className="h-2 w-2 rounded-full bg-success" /> Vendor-neutral • Consultant-grade
             </div>
             <h1 className="mt-6 font-display text-5xl md:text-6xl font-bold tracking-tight text-foreground">
-              Benchmark every data centre UPS <span className="text-accent">before</span> you call a vendor.
+            Build, compare and prepare UPS enquiries <span className="text-accent">before</span> you call a vendor.
             </h1>
             <p className="mt-6 text-lg text-muted-foreground max-w-2xl">
-              A specification intelligence platform for electrical consultants. Compare topology, efficiency, modular architecture, footprint and verification status across the major UPS manufacturers — in one place, with sources.
+            A consultant workspace for UPS product screening, rating comparison and vendor enquiry preparation — with source links and verification status.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link to="/login"><Button size="lg" className="gap-2">Open the platform <ArrowRight className="h-4 w-4" /></Button></Link>
@@ -136,7 +136,7 @@ function Landing() {
 
       <footer className="border-t border-border">
         <div className="mx-auto max-w-7xl px-6 py-8 flex flex-wrap justify-between items-center gap-4 text-sm text-muted-foreground">
-          <div>© {new Date().getFullYear()} DC UPS Benchmark</div>
+          <div>© {new Date().getFullYear()} UPS Wonderbook</div>
           <div>Vendor-neutral product intelligence</div>
         </div>
       </footer>
