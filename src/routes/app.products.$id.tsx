@@ -191,12 +191,7 @@ function ProductDetail() {
                 <dd className="font-medium">{v ?? "—"}</dd>
               </div>
             ))}
-            {specs?.map((s) => (
-              <div key={s.id} className="grid grid-cols-2 gap-4 py-3 text-sm">
-                <dt className="text-muted-foreground">{s.spec_key}</dt>
-                <dd className="font-medium">{s.spec_value ?? "—"}</dd>
-              </div>
-            ))}
+            
           </dl>
         </Card>
         <Card className="lg:col-span-3 p-6 w-full">
