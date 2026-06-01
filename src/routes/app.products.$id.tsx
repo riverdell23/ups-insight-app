@@ -10,6 +10,15 @@ import { verificationBadgeClass } from "@/lib/ups";
 
 export const Route = createFileRoute("/app/products/$id")({ component: ProductDetail });
 
+function formatBatteryOption(value?: string | null) {
+  if (!value) return "-";
+
+  return value
+    .replace(/lithium-ion/gi, "Li-ion")
+    .replace(/options to verify/gi, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
 function getDoubleConversionEff(value?: string | null) {
   if (!value) return "-";
 
@@ -33,27 +42,39 @@ function getEcoModeEff(value?: string | null) {
 }
 
 
-function formatDimensionsMetric(value?: string | null) {
-
-  
+function formatDimensionsMetric(value: string | null) {
   if (!value) return "-";
 
   const text = value.trim();
 
-  // Convert format like: 93.5 in W x 33.5 in D x 78.9 in H
-  const match = text.match(
+  // Already shortened format: 550 x 800 x 1450
+  const shortMetricMatch = text.match(/^([\d.]+)\s*x\s*([\d.]+)\s*x\s*([\d.]+)$/i);
+  if (shortMetricMatch) {
+    return `${shortMetricMatch[1]} x ${shortMetricMatch[2]} x ${shortMetricMatch[3]}`;
+  }
+
+  // Existing metric format: 550 mm W x 800 mm D x 1450 mm H
+  const metricMatch = text.match(
+    /([\d.]+)\s*mm\s*W\s*x\s*([\d.]+)\s*mm\s*D\s*x\s*([\d.]+)\s*mm\s*H/i
+  );
+  if (metricMatch) {
+    return `${metricMatch[1]} x ${metricMatch[2]} x ${metricMatch[3]}`;
+  }
+
+  // Imperial format: 93.5 in W x 33.5 in D x 78.9 in H
+  const inchMatch = text.match(
     /([\d.]+)\s*in\s*W\s*x\s*([\d.]+)\s*in\s*D\s*x\s*([\d.]+)\s*in\s*H/i
   );
+  if (inchMatch) {
+    const widthMm = Math.round(Number(inchMatch[1]) * 25.4);
+    const depthMm = Math.round(Number(inchMatch[2]) * 25.4);
+    const heightMm = Math.round(Number(inchMatch[3]) * 25.4);
 
-  if (!match) return text;
+    return `${widthMm} x ${depthMm} x ${heightMm}`;
+  }
 
-  const widthMm = Math.round(Number(match[1]) * 25.4);
-  const depthMm = Math.round(Number(match[2]) * 25.4);
-  const heightMm = Math.round(Number(match[3]) * 25.4);
-
-  return `${widthMm} x ${depthMm} x ${heightMm}`;
+  return text;
 }
-
 function ProductDetail() {
   const { id } = Route.useParams();
   const { data: product, isLoading } = useQuery({
@@ -193,17 +214,32 @@ function ProductDetail() {
       <table className="w-full text-sm">
         <thead>
           <tr className="border-b text-left text-muted-foreground">
-            <th className="py-2 pr-4">Rating</th>
-            <th className="py-2 pr-4">kVA</th>
-            <th className="py-2 pr-4">kW</th>
-            <th className="py-2 pr-4 whitespace-nowrap">Double-Conversion Eff.</th>
-<th className="py-2 pr-4 whitespace-nowrap">Eco Mode Eff.</th>
-            <th className="py-2 pr-4">Dimensions (mmW x mmD x mmH)</th>
-            <th className="py-2 pr-4">Footprint</th>
-            <th className="py-2 pr-4">Weight</th>
-            <th className="py-2 pr-4">Battery option</th>
-            <th className="py-2 pr-4">Datasheet/source</th>
-            <th className="py-2 pr-4">Last updated</th>
+          <th className="py-2 pr-4 align-top">Rating</th>
+          <th className="py-2 pr-4 align-top">kVA</th>
+          <th className="py-2 pr-4 align-top">kW</th>
+          <th className="py-2 pr-4 whitespace-nowrap align-top">Double-Conversion Eff.</th>
+          <th className="py-2 pr-4 whitespace-nowrap align-top">Eco Mode Eff.</th>
+<th className="py-2 pr-4 whitespace-nowrap align-top">
+  <div>Dimensions</div>
+  <div className="text-xs font-normal text-muted-foreground">
+    mmW x mmD x mmH
+  </div>
+</th>
+<th className="py-2 pr-4 whitespace-nowrap align-top">
+  <div>Footprint</div>
+  <div className="text-xs font-normal text-muted-foreground">
+    m²
+  </div>
+</th>
+<th className="py-2 pr-4 whitespace-nowrap align-top">
+  <div>Weight</div>
+  <div className="text-xs font-normal text-muted-foreground">
+    kg
+  </div>
+</th>
+<th className="py-2 pr-4 align-top">Battery option</th>
+<th className="py-2 pr-4 align-top">Datasheet/source</th>
+<th className="py-2 pr-4 align-top">Last updated</th>
           </tr>
         </thead>
         <tbody>
@@ -227,7 +263,9 @@ function ProductDetail() {
               <td className="py-3 pr-4">{formatDimensionsMetric(rating.dimensions)}</td>
               <td className="py-3 pr-4">{rating.footprint_m2 ?? "-"}</td>
               <td className="py-3 pr-4">{rating.weight_kg ?? "-"}</td>
-              <td className="py-3 pr-4">{rating.battery_option ?? "-"}</td>
+              <td className="py-3 pr-4">
+  {formatBatteryOption(rating.battery_option)}
+</td>
               <td className="py-3 pr-4">
                 {rating.datasheet_url ? (
                   <a
