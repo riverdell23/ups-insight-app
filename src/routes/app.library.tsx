@@ -15,6 +15,39 @@ import { toast } from "sonner";
 
 export const Route = createFileRoute("/app/library")({ component: LibraryPage });
 
+function formatBatteryOption(value?: string | null) {
+  if (!value) return "-";
+
+  const text = value.trim();
+
+  const hasVrla = /VRLA/i.test(text);
+  const hasVla = /\bVLA\b/i.test(text);
+  const hasLithium = /lithium-ion|li-ion|lithium ion/i.test(text);
+  const hasNicad = /nicad|ni-cd|nickel cadmium/i.test(text);
+
+  const options: string[] = [];
+
+  if (hasVrla) options.push("VRLA");
+  if (hasVla) options.push("VLA");
+  if (hasLithium) options.push("Li-ion");
+  if (hasNicad) options.push("Ni-Cd");
+
+  if (options.length > 0) {
+    return options.join(" / ");
+  }
+
+  if (/battery options to verify|external battery options to verify|options to verify/i.test(text)) {
+    return "To verify";
+  }
+
+  return text
+    .replace(/lithium-ion/gi, "Li-ion")
+    .replace(/options to verify/gi, "")
+    .replace(/external battery/gi, "External battery")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 function LibraryPage() {
   const { isAdmin } = useAuth();
   const searchParams = Route.useSearch() as { ids?: string };
@@ -197,16 +230,43 @@ window.location.href = `/app/compare?${params.toString()}`;
           <table className="w-full text-sm">
             <thead className="bg-muted/50 text-xs uppercase tracking-wider text-muted-foreground">
               <tr>
-                <th className="w-10 p-3"></th>
-                <th className="text-left p-3">UPS Series</th>
-                
-                <th className="px-4 py-3 text-left">Selected Rating</th>
-                <th className="text-right p-3">Max Capacity (kW)</th>
-                <th className="text-right p-3">Max Parallel (kW)</th>
-                <th className="text-right p-3">Double Conv. Eff %</th>
-                <th className="text-left p-3">Battery Type</th>
-                <th className="text-left p-3">Physical Data</th>
-                <th className="text-left p-3">Status</th>
+              <th className="w-10 p-3"></th>
+
+<th className="w-[260px] text-left p-3 align-top">
+  <div>UPS Series</div>
+  <div className="text-xs font-normal text-muted-foreground">&nbsp;</div>
+</th>
+<th className="w-[150px] px-4 py-3 text-right">
+  <div>Min Capacity</div>
+  <div className="text-xs font-normal text-muted-foreground">(kW)</div>
+</th>
+
+<th className="text-right p-3">
+  <div>Max Capacity</div>
+  <div className="text-xs font-normal text-muted-foreground">(kW)</div>
+</th>
+
+<th className="text-right p-3">
+  <div>Max Parallel</div>
+  <div className="text-xs font-normal text-muted-foreground">(kW)</div>
+</th>
+
+<th className="text-right p-3">
+  <div>Double Conv. Eff</div>
+  <div className="text-xs font-normal text-muted-foreground">(%)</div>
+</th>
+<th className="text-left p-3 align-top">
+  <div>Battery Option</div>
+  <div className="text-xs font-normal text-muted-foreground">&nbsp;</div>
+</th>
+<th className="text-left p-3 align-top">
+  <div>Physical Data</div>
+  <div className="text-xs font-normal text-muted-foreground">&nbsp;</div>
+</th>
+<th className="text-left p-3 align-top">
+  <div>Status</div>
+  <div className="text-xs font-normal text-muted-foreground">&nbsp;</div>
+</th>
                
               </tr>
             </thead>
@@ -231,27 +291,8 @@ window.location.href = `/app/compare?${params.toString()}`;
 </Link>
                   </td>
                   
-                  <td className="px-4 py-3">
-  <select
-    className="w-full rounded-md border border-border bg-background px-2 py-1 text-xs"
-    value={selectedRatingByProductId[String(p.id)] ?? ""}
-    onChange={(event) =>
-      setSelectedRatingByProductId((current) => ({
-        ...current,
-        [String(p.id)]: event.target.value,
-      }))
-    }
-  >
-    <option value="">Auto</option>
-    {(p.ups_ratings ?? [])
-      .slice()
-      .sort((a: any, b: any) => Number(a.kw ?? 0) - Number(b.kw ?? 0))
-      .map((rating: any) => (
-        <option key={String(rating.id)} value={String(rating.id)}>
-          {rating.rating_label ?? `${rating.kw ?? "-"} kW`}
-        </option>
-      ))}
-  </select>
+                  <td className="w-[150px] px-4 py-3 text-right font-mono">
+  {p.min_capacity_kw ?? "-"}
 </td>
                  
 
@@ -268,7 +309,7 @@ window.location.href = `/app/compare?${params.toString()}`;
 </td>
 
 <td className="p-3">
-  {p.battery_type ?? "-"}
+{formatBatteryOption(p.battery_type)}
 </td>
 <td className="p-3">
   {(() => {
