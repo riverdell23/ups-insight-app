@@ -7,8 +7,8 @@ import { DISCLAIMER } from "@/lib/ups";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "DC UPS Benchmark — Vendor-Neutral UPS Comparison" },
-      { name: "description", content: "Compare data centre UPS products from leading vendors before contacting sales." },
+      { title: "UPS Wonderbook — Vendor-Neutral UPS Consultant Workspace" },
+      { name: "description", content: "UPS product screening, rating comparison and vendor enquiry preparation for electrical consultants." },
     ],
   }),
   component: Landing,
